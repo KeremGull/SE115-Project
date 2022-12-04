@@ -41,8 +41,7 @@ public class Project{
             if(i%2==0){
                 for(int j =0;j<playersHand.length;j++){
                     if(playersHand[j] == null){
-                        moveCard(deck[i+index],playersHand[j]); 
-                        deck[i+index] = null;
+                        moveCard(deck,i+index,playersHand,j); 
                         break;
                     }
                 }
@@ -54,9 +53,9 @@ public class Project{
         return index +8;
     }
 
-    public static void moveCard(Card from,Card to){
-        to = from;
-        from= null;
+    public static void moveCard(Card[] fromDeck,int fromIndex,Card[] toDeck,int toIndex){
+        toDeck[toIndex] = fromDeck[fromIndex];
+        fromDeck[fromIndex]= null;
     }
 
     public static boolean checkHands(Card[] hand){
@@ -66,6 +65,54 @@ public class Project{
         return false;
     }
     
+    public static int checkInput(String input,Card[] deck){
+        String[] words = input.split("");
+        String number = "";
+        String suit = "";
+        String[][] suits = {{"♥","H"},{"♠","S"},{"♣","C"},{"♦","D"}};
+        String[] numbers = {"A","2","3","4","5","6","7","8","9","J","Q","K"};
+        boolean isSuitFound= false;
+        boolean isNumberFound = false;
+        for(int i=0;i<words.length;i++){
+            for(int j =0;j<suits.length;j++){   
+                for(int k =0;k<suits[j].length;k++){
+                    if(words[i].equals(suits[j][k])){
+                        if(suit.equals("")) {
+                            suit= suits[j][0];
+                            isSuitFound = true;
+                        }   
+                        else return -1;
+                    }
+                }
+            }
+            for(int j =0;j<numbers.length;j++){
+                if(words[i].equals(numbers[j])){
+                    if(number.equals("")){
+                        number=numbers[j];
+                        isNumberFound = true;
+                    }
+                    else return -2;
+                }
+            }
+            
+            if(i>0){
+                if(words[i-1].equals("1")&&words[i].equals("0")){
+                    if(number==""){
+                        number = "10";
+                        isNumberFound=true;
+                    } 
+                    else return -3;
+                }
+            }
+            
+        }
+        if(!isSuitFound) return -10;
+        if(!isNumberFound) return -20;
+        for(int i =0;i<deck.length;i++){
+            if(deck[i].getNumber()==number && deck[i].getSuit()==suit) return i;
+        }
+        return -5;
+    }
 
     public static void showTable(Card[] hand,Card[] middle,int point){
 
@@ -96,7 +143,7 @@ public class Project{
             middle[i] = null;
         }
         for(int i =0;i<4;i++){
-            moveCard(deck[topOfDeck],middle[topOfMiddle]);
+            moveCard(deck,topOfDeck,middle,topOfMiddle);
             topOfMiddle++;
             topOfDeck++;
         } //Placing 4 cards to middle before game starts.
@@ -106,6 +153,16 @@ public class Project{
             if(!checkHands(comp.getHand())) topOfDeck = dealCards(deck, topOfDeck, playersHand, comp);
             if(turn%2==0){
                 
+                while(true){
+                    for(int i =0;i<playersHand.length;i++) System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"   ");
+                    System.out.println();
+                    System.out.println("------------------Middle---------------------");
+                    System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
+                    for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
+                    System.out.println();
+                    String input = sc.nextLine();
+                    System.out.println(checkInput(input, playersHand));
+                }
             }
             else{
 
