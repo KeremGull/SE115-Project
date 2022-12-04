@@ -101,7 +101,7 @@ public class Project{
         System.out.println();
         System.out.println("-------------------------Middle----------------------");
         System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber()+"    ");
-        for(int i =0;i<topOfMiddle-1;i++){
+        for(int i =topOfMiddle-2;i>=0;i--){
             System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"    ");
         }
     }
