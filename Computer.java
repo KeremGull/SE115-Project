@@ -3,14 +3,13 @@ public class Computer {
     public Computer(){
         hand = new Card[4];
         for(int i =0;i<hand.length;i++){
-            hand[i] = new Card("","");
+            hand[i] = null;
         }
     }
     public void addCard(Card input){
         for(int i =0;i<hand.length;i++){
-            if(hand[i].getSuit()==""&&hand[i].getNumber()==""){
-                hand[i].setSuit(input.getSuit());
-                hand[i].setNumber(input.getNumber());
+            if(hand[i]==null){
+                hand[i]= input;
                 break;
             }
         }

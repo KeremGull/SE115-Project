@@ -40,23 +40,36 @@ public class Project{
         for(int i =0;i<8;i++){
             if(i%2==0){
                 for(int j =0;j<playersHand.length;j++){
-                    if(playersHand[j].getSuit()==""&&playersHand[j].getNumber()==""){
-                        setCard(deck[i],playersHand[j]); 
+                    if(playersHand[j] == null){
+                        moveCard(deck[i+index],playersHand[j]); 
+                        deck[i+index] = null;
                         break;
                     }
                 }
             }else{
-                comp.addCard(deck[i]);
+                comp.addCard(deck[i+index]);
+                deck[i+index] = null;
             }
         }
         return index +8;
     }
 
-    public static void setCard(Card from,Card to){
-        to.setSuit(from.getSuit());
-        to.setNumber(from.getNumber());
+    public static void moveCard(Card from,Card to){
+        to = from;
+        from= null;
     }
 
+    public static boolean checkHands(Card[] hand){
+        for(int i =0;i<4;i++){
+            if(hand[i].getNumber()!=null) return true;
+        }
+        return false;
+    }
+    
+
+    public static void showTable(Card[] hand,Card[] middle,int point){
+
+    }
     //This is where the game's functions will be.
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
@@ -71,7 +84,7 @@ public class Project{
         deck = deckCut(cut,deck);
         //players and computers variables
         Card[] playersHand = new Card[4];
-        for(int i =0;i<playersHand.length;i++) playersHand[i] = new Card("","");
+        for(int i =0;i<playersHand.length;i++) playersHand[i] = null;
         int playersPoint =0;
         Computer comp = new Computer(); 
 
@@ -80,29 +93,24 @@ public class Project{
         Card[] middle = new Card[deck.length]; //Incase noone ever does a match.
         int topOfMiddle=0;
         for(int i =0;i<middle.length;i++){
-            middle[i] = new Card("","");
+            middle[i] = null;
         }
         for(int i =0;i<4;i++){
-            setCard(deck[topOfDeck],middle[topOfMiddle]);
+            moveCard(deck[topOfDeck],middle[topOfMiddle]);
             topOfMiddle++;
             topOfDeck++;
         } //Placing 4 cards to middle before game starts.
+        
+        //Game has started
+        for(int turn =0;turn<48;turn++){
+            if(!checkHands(comp.getHand())) topOfDeck = dealCards(deck, topOfDeck, playersHand, comp);
+            if(turn%2==0){
+                
+            }
+            else{
 
-        //Test
-        System.out.println("-------------------------Player's Hand----------------------");
-        for(int i =0;i<playersHand.length;i++){
-            System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"     ");
+            }
         }
-        System.out.println();
-        System.out.println("-------------------------Computer's Hand----------------------");
-        for(int i =0;i<comp.getHand().length;i++){
-            System.out.print(comp.getHand()[i].getSuit()+" "+comp.getHand()[i].getNumber()+"    ");
-        }
-        System.out.println();
-        System.out.println("-------------------------Middle----------------------");
-        System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber()+"    ");
-        for(int i =topOfMiddle-2;i>=0;i--){
-            System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"    ");
-        }
+
     }
 }   
