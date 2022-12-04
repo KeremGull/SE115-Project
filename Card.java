@@ -14,10 +14,10 @@ public class Card {
     public void setSuit(String input){
         suit = input;
     }
-    public void SetNumber(String input){
+    public void setNumber(String input){
         number = input;
     }
-    public String GetNumber(){
+    public String getNumber(){
         return number;
     }
     public String getSuit(){
