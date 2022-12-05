@@ -1,4 +1,7 @@
 import java.util.Scanner;
+
+import javax.print.attribute.standard.OutputDeviceAssigned;
+
 import java.util.Random;
 public class Project{
     public static Card[] createDeck(){
@@ -101,7 +104,7 @@ public class Project{
                         number = "10";
                         isNumberFound=true;
                     } 
-                    else return -3;
+                    else return -2;
                 }
             }
             
@@ -109,7 +112,7 @@ public class Project{
         if(!isSuitFound) return -10;
         if(!isNumberFound) return -20;
         for(int i =0;i<deck.length;i++){
-            if(deck[i].getNumber()==number && deck[i].getSuit()==suit) return i;
+            if(deck[i] != null)  if(deck[i].getNumber()==number && deck[i].getSuit()==suit) return i;
         }
         return -5;
     }
@@ -132,6 +135,9 @@ public class Project{
         //players and computers variables
         Card[] playersHand = new Card[4];
         for(int i =0;i<playersHand.length;i++) playersHand[i] = null;
+        Card[] playersPocket = new Card[52];
+        for(int i =0;i<playersPocket.length;i++) playersPocket[i] = null;
+        int topOfPlayersPocket = 0;
         int playersPoint =0;
         Computer comp = new Computer(); 
 
@@ -152,20 +158,95 @@ public class Project{
         for(int turn =0;turn<48;turn++){
             if(!checkHands(comp.getHand())) topOfDeck = dealCards(deck, topOfDeck, playersHand, comp);
             if(turn%2==0){
-                
+                int count = 0;
+                for(int i =0;i<playersHand.length;i++){
+                    if(playersHand[i] == null) count++;
+                }
+                if(count == 4){
+                    topOfDeck = dealCards(deck, topOfDeck, playersHand, comp);
+                }
+                int output=0;
                 while(true){
-                    for(int i =0;i<playersHand.length;i++) System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"   ");
+                    for(int i =0;i<playersHand.length;i++) if( playersHand[i] !=null) System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"   ");
                     System.out.println();
                     System.out.println("------------------Middle---------------------");
-                    System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
-                    for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
+                    System.out.println(topOfMiddle);
+                    if(topOfMiddle>0) System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
+                    if(topOfMiddle>1) for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
                     System.out.println();
                     String input = sc.nextLine();
-                    System.out.println(checkInput(input, playersHand));
+                    output = checkInput(input, playersHand);
+                    if(output == -1){
+                        System.out.println("You can't input more than one suit. Please try again.");
+                        continue;
+                    }
+                    if(output== -2){
+                        System.out.println("You can't input more than one number. Please try again.");
+                        continue;
+                    }
+                    if(output == -10){
+                        System.out.println("You need to input a suit. Please try again.");
+                        continue;
+                    }
+                    if(output == -20){
+                        System.out.println("You need to input a number. Please try again.");
+                        continue;
+                    }
+                    if(output == -5){
+                        System.out.println("You don't have such a card in your hand!!!. Please try again.");
+                        continue;
+                    }
+                    break;
                 }
+                moveCard(playersHand, output, middle, topOfMiddle);
+                if(topOfMiddle ==1){
+                    if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber())){
+                        playersPoint +=10; // Because of pişti
+                        int topOfPlayersPocketPlus = 0;
+                        for(int i =topOfMiddle;i>-1;i--){
+                            moveCard(middle, i, playersPocket, topOfPlayersPocket+topOfPlayersPocketPlus);
+                            topOfPlayersPocketPlus++;
+                        }
+                        topOfPlayersPocket += topOfPlayersPocketPlus;
+                        System.out.println("Piştii!!");
+                        topOfMiddle = 0;
+                    }
+                    else if(middle[topOfMiddle].getNumber().equals("J")){
+                        int topOfPlayersPocketPlus = 0;
+                        for(int i =topOfMiddle;i>-1;i--){
+                            moveCard(middle, i, playersPocket, topOfPlayersPocket+topOfPlayersPocketPlus);
+                            topOfPlayersPocketPlus++;
+                        }
+                        topOfPlayersPocket += topOfPlayersPocketPlus;
+                        System.out.println("Match!!");
+                        topOfMiddle = 0;
+                    }
+                    else{
+                        topOfMiddle++;
+                    }
+                        
+                }
+                else if(topOfMiddle>1){
+                    if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber()) || middle[topOfMiddle].getNumber().equals("J")){
+                        int topOfPlayersPocketPlus = 0;
+                        for(int i =topOfMiddle;i>-1;i--){
+                            moveCard(middle, i, playersPocket, topOfPlayersPocket+topOfPlayersPocketPlus);
+                            topOfPlayersPocketPlus++;
+                        }
+                        topOfPlayersPocket += topOfPlayersPocketPlus;
+                        System.out.println("Match!!!");
+                        topOfMiddle = 0;
+                    }else{
+                        topOfMiddle++;
+                    }
+                }
+                else{
+                    topOfMiddle++;
+                }
+
             }
             else{
-
+                
             }
         }
 
