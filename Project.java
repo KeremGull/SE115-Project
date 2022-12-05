@@ -63,7 +63,7 @@ public class Project{
 
     public static boolean checkHands(Card[] hand){
         for(int i =0;i<4;i++){
-            if(hand[i].getNumber()!=null) return true;
+            if(hand[i] !=null) return true;
         }
         return false;
     }
@@ -246,6 +246,8 @@ public class Project{
 
             }
             else{
+                moveCard(comp.getHand(), comp.play(middle, topOfMiddle-1), middle, topOfMiddle);
+                topOfMiddle++;
                 
             }
         }
