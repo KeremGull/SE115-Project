@@ -170,7 +170,6 @@ public class Project{
                     for(int i =0;i<playersHand.length;i++) if( playersHand[i] !=null) System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"   ");
                     System.out.println();
                     System.out.println("------------------Middle---------------------");
-                    System.out.println(topOfMiddle);
                     if(topOfMiddle>0) System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
                     if(topOfMiddle>1) for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
                     System.out.println();
@@ -247,7 +246,31 @@ public class Project{
             }
             else{
                 moveCard(comp.getHand(), comp.play(middle, topOfMiddle-1), middle, topOfMiddle);
-                topOfMiddle++;
+                if(topOfMiddle ==1){
+                    if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber())){
+                        System.out.println("Piştii!!");
+                        topOfMiddle = 0;
+                    }
+                    else if(middle[topOfMiddle].getNumber().equals("J")){
+                        System.out.println("Match!!");
+                        topOfMiddle = 0;
+                    }
+                    else{
+                        topOfMiddle++;
+                    }
+                        
+                }
+                else if(topOfMiddle>1){
+                    if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber()) || middle[topOfMiddle].getNumber().equals("J")){
+                        System.out.println("Match!!!");
+                        topOfMiddle = 0;
+                    }else{
+                        topOfMiddle++;
+                    }
+                }
+                else{
+                    topOfMiddle++;
+                }
                 
             }
         }
