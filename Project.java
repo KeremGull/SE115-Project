@@ -155,6 +155,7 @@ public class Project{
         } //Placing 4 cards to middle before game starts.
         
         //Game has started
+        String lastWinner = "noone";
         for(int turn =0;turn<48;turn++){
             if(!checkHands(comp.getHand())) topOfDeck = dealCards(deck, topOfDeck, playersHand, comp);
             if(turn%2==0){
@@ -201,23 +202,21 @@ public class Project{
                 if(topOfMiddle ==1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber())){
                         playersPoint +=10; // Because of pişti
-                        int topOfPlayersPocketPlus = 0;
+                        lastWinner = "player";
                         for(int i =topOfMiddle;i>-1;i--){
-                            moveCard(middle, i, playersPocket, topOfPlayersPocket+topOfPlayersPocketPlus);
-                            topOfPlayersPocketPlus++;
+                            moveCard(middle, i, playersPocket, topOfPlayersPocket);
+                            topOfPlayersPocket++;
                         }
-                        topOfPlayersPocket += topOfPlayersPocketPlus;
                         System.out.println("Piştii!!");
                         topOfMiddle = 0;
                     }
                     else if(middle[topOfMiddle].getNumber().equals("J")){
-                        int topOfPlayersPocketPlus = 0;
                         for(int i =topOfMiddle;i>-1;i--){
-                            moveCard(middle, i, playersPocket, topOfPlayersPocket+topOfPlayersPocketPlus);
-                            topOfPlayersPocketPlus++;
+                            moveCard(middle, i, playersPocket, topOfPlayersPocket);
+                            topOfPlayersPocket++;
                         }
-                        topOfPlayersPocket += topOfPlayersPocketPlus;
                         System.out.println("Match!!");
+                        lastWinner = "player";
                         topOfMiddle = 0;
                     }
                     else{
@@ -227,13 +226,12 @@ public class Project{
                 }
                 else if(topOfMiddle>1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber()) || middle[topOfMiddle].getNumber().equals("J")){
-                        int topOfPlayersPocketPlus = 0;
                         for(int i =topOfMiddle;i>-1;i--){
-                            moveCard(middle, i, playersPocket, topOfPlayersPocket+topOfPlayersPocketPlus);
-                            topOfPlayersPocketPlus++;
+                            moveCard(middle, i, playersPocket, topOfPlayersPocket);
+                            topOfPlayersPocket++;
                         }
-                        topOfPlayersPocket += topOfPlayersPocketPlus;
                         System.out.println("Match!!!");
+                        lastWinner = "player";
                         topOfMiddle = 0;
                     }else{
                         topOfMiddle++;
@@ -249,10 +247,12 @@ public class Project{
                 if(topOfMiddle ==1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber())){
                         System.out.println("Piştii!!");
+                        lastWinner = "computer";
                         topOfMiddle = 0;
                     }
                     else if(middle[topOfMiddle].getNumber().equals("J")){
                         System.out.println("Match!!");
+                        lastWinner = "computer";
                         topOfMiddle = 0;
                     }
                     else{
@@ -274,6 +274,43 @@ public class Project{
                 
             }
         }
-
+        if(topOfMiddle!=0){
+            if(lastWinner =="noone"){
+                System.out.println("No match or pişti has been made so no winner in this game.");
+                System.out.println("You got 0 points.");
+            }else{
+                if(lastWinner=="player"){
+                    for(int i = topOfMiddle-1;i>-1;i--){
+                        moveCard(middle, i, playersPocket, topOfPlayersPocket);
+                        topOfPlayersPocket++;
+                    }   
+                }
+                else{
+                System.out.println("Last winner was computer so cards on the middle will go computer's pocket.");
+                }
+                for(int i =0;i<topOfPlayersPocket;i++){
+                    if(playersPocket[i].getNumber().equals("10")&& playersPocket[i].getSuit().equals("♦")){
+                        System.out.println("You are lucky found 10 ♦");
+                        playersPoint +=3;
+                    }
+                    else if(playersPocket[i].getNumber().equals("2")&& playersPocket[i].getSuit().equals("♣")){
+                        System.out.println("You are lucky found 2 ♣");
+                        playersPoint +=2;
+                    }
+                    else{
+                        playersPoint++;
+                    }
+                }
+                if(topOfPlayersPocket == 26){
+                    System.out.println("Player's and computer's card numbers are same so no additional points.");
+                }else if(topOfPlayersPocket >26){
+                    System.out.println("You got "+topOfPlayersPocket+" cards so u got additional 3 points");
+                    playersPoint +=3;
+                }else{
+                    System.out.println("You got "+topOfPlayersPocket+" cards.");
+                }
+                System.out.println("Your total points: "+playersPoint);
+            }
+        }
     }
 }   
