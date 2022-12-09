@@ -1,8 +1,6 @@
 import java.util.Scanner;
-
-import javax.print.attribute.standard.OutputDeviceAssigned;
-
 import java.util.Random;
+
 public class Project{
     public static Card[] createDeck(){
         Card[] deck = new Card[52];
@@ -117,8 +115,12 @@ public class Project{
         return -5;
     }
 
-    public static void showTable(Card[] hand,Card[] middle,int point){
-
+    public static void showTable(Card[] playersHand,Card[] middle,int topOfMiddle){
+        for(int i =0;i<playersHand.length;i++) if( playersHand[i] !=null) System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"   ");
+        System.out.println();
+        System.out.println("------------------Middle---------------------");
+        if(topOfMiddle>0) System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
+        if(topOfMiddle>1) for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
     }
     //This is where the game's functions will be.
     public static void main(String[] args){
@@ -133,14 +135,11 @@ public class Project{
         int cut = rand.nextInt(10,deck.length-10);
         deck = deckCut(cut,deck);
         //players and computers variables
-        Card[] playersHand = new Card[4];
-        for(int i =0;i<playersHand.length;i++) playersHand[i] = null;
-        Card[] playersPocket = new Card[52];
-        for(int i =0;i<playersPocket.length;i++) playersPocket[i] = null;
-        int topOfPlayersPocket = 0;
-        int playersPoint =0;
+        
+        Player player = new Player();
         Computer comp = new Computer(); 
-
+        Card [] playersHand = player.getHand();
+        Card[] playersPocket = player.getPocket();  
         int topOfDeck = 0;
         topOfDeck = dealCards(deck, topOfDeck, playersHand, comp); //both topOfDeck value has changed and cards are dealed.
         Card[] middle = new Card[deck.length]; //Incase noone ever does a match.
@@ -168,12 +167,7 @@ public class Project{
                 }
                 int output=0;
                 while(true){
-                    for(int i =0;i<playersHand.length;i++) if( playersHand[i] !=null) System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"   ");
-                    System.out.println();
-                    System.out.println("------------------Middle---------------------");
-                    if(topOfMiddle>0) System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
-                    if(topOfMiddle>1) for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
-                    System.out.println();
+                    showTable(playersHand, middle, topOfMiddle);
                     String input = sc.nextLine();
                     output = checkInput(input, playersHand);
                     if(output == -1){
@@ -201,19 +195,19 @@ public class Project{
                 moveCard(playersHand, output, middle, topOfMiddle);
                 if(topOfMiddle ==1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber())){
-                        playersPoint +=10; // Because of pişti
-                        lastWinner = "player";
+                        player.incrementPoint(10); // Because of pişti
+                        lastWinner = "player"; 
                         for(int i =topOfMiddle;i>-1;i--){
-                            moveCard(middle, i, playersPocket, topOfPlayersPocket);
-                            topOfPlayersPocket++;
+                            moveCard(middle, i, playersPocket, player.getTopOfPocket());
+                            player.incrementTopOfPocket();
                         }
                         System.out.println("Piştii!!");
                         topOfMiddle = 0;
                     }
                     else if(middle[topOfMiddle].getNumber().equals("J")){
                         for(int i =topOfMiddle;i>-1;i--){
-                            moveCard(middle, i, playersPocket, topOfPlayersPocket);
-                            topOfPlayersPocket++;
+                            moveCard(middle, i, playersPocket, player.getTopOfPocket());
+                            player.incrementTopOfPocket();
                         }
                         System.out.println("Match!!");
                         lastWinner = "player";
@@ -227,8 +221,8 @@ public class Project{
                 else if(topOfMiddle>1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber()) || middle[topOfMiddle].getNumber().equals("J")){
                         for(int i =topOfMiddle;i>-1;i--){
-                            moveCard(middle, i, playersPocket, topOfPlayersPocket);
-                            topOfPlayersPocket++;
+                            moveCard(middle, i, playersPocket, player.getTopOfPocket());
+                            player.incrementTopOfPocket();
                         }
                         System.out.println("Match!!!");
                         lastWinner = "player";
@@ -281,35 +275,35 @@ public class Project{
             }else{
                 if(lastWinner=="player"){
                     for(int i = topOfMiddle-1;i>-1;i--){
-                        moveCard(middle, i, playersPocket, topOfPlayersPocket);
-                        topOfPlayersPocket++;
+                        moveCard(middle, i, playersPocket, player.getTopOfPocket());
+                        player.incrementTopOfPocket();
                     }   
                 }
                 else{
                 System.out.println("Last winner was computer so cards on the middle will go computer's pocket.");
                 }
-                for(int i =0;i<topOfPlayersPocket;i++){
+                for(int i =0;i<player.getTopOfPocket();i++){
                     if(playersPocket[i].getNumber().equals("10")&& playersPocket[i].getSuit().equals("♦")){
                         System.out.println("You are lucky found 10 ♦");
-                        playersPoint +=3;
+                        player.incrementPoint(3);
                     }
                     else if(playersPocket[i].getNumber().equals("2")&& playersPocket[i].getSuit().equals("♣")){
                         System.out.println("You are lucky found 2 ♣");
-                        playersPoint +=2;
+                        player.incrementPoint(2);
                     }
                     else{
-                        playersPoint++;
+                        player.incrementPoint(1);
                     }
                 }
-                if(topOfPlayersPocket == 26){
+                if(player.getTopOfPocket()== 26){
                     System.out.println("Player's and computer's card numbers are same so no additional points.");
-                }else if(topOfPlayersPocket >26){
-                    System.out.println("You got "+topOfPlayersPocket+" cards so u got additional 3 points");
-                    playersPoint +=3;
+                }else if(player.getTopOfPocket()>26){
+                    System.out.println("You got "+player.getTopOfPocket()+" cards so u got additional 3 points");
+                    player.incrementPoint(3);
                 }else{
-                    System.out.println("You got "+topOfPlayersPocket+" cards.");
+                    System.out.println("You got "+player.getTopOfPocket()+" cards.");
                 }
-                System.out.println("Your total points: "+playersPoint);
+                System.out.println("Your total points: "+player.getPoint());
             }
         }
     }
