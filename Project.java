@@ -34,7 +34,8 @@ public class Project{
         for(int i =0;i<deck.length;i++){
             deckCutted[ (i+(deck.length-cut)) % deck.length] =deck[i];
         }
-        return deckCutted;
+        return deckCutted;   
+        
     }
     
     public static int dealCards(Card[] deck,int index,Card[] playersHand,Computer comp){
@@ -59,7 +60,7 @@ public class Project{
         fromDeck[fromIndex]= null;
     }
 
-    public static boolean checkHands(Card[] hand){
+    public static boolean checkHand(Card[] hand){
         for(int i =0;i<4;i++){
             if(hand[i] !=null) return true;
         }
@@ -82,7 +83,10 @@ public class Project{
                             suit= suits[j][0];
                             isSuitFound = true;
                         }   
-                        else return -1;
+                        else {
+                            System.out.println("You can't input more than one suit. Please try again.");
+                            return -1;
+                        }
                     }
                 }
             }
@@ -92,7 +96,10 @@ public class Project{
                         number=numbers[j];
                         isNumberFound = true;
                     }
-                    else return -2;
+                    else {
+                        System.out.println("You can't input more than one number. Please try again.");
+                        return -1;
+                    }
                 }
             }
             
@@ -102,17 +109,27 @@ public class Project{
                         number = "10";
                         isNumberFound=true;
                     } 
-                    else return -2;
+                    else {
+                        System.out.println("You can't input more than one number. Please try again.");
+                        return -1;
+                    }
                 }
             }
             
         }
-        if(!isSuitFound) return -10;
-        if(!isNumberFound) return -20;
+        if(!isSuitFound) {
+            System.out.println("You need to input a suit. Please try again.");
+            return -1;
+        }
+        if(!isNumberFound) {
+            System.out.println("You need to input a number. Please try again.");
+            return -1;
+        }
         for(int i =0;i<deck.length;i++){
             if(deck[i] != null)  if(deck[i].getNumber()==number && deck[i].getSuit()==suit) return i;
         }
-        return -5;
+        System.out.println("You don't have such a card in your hand!!!. Please try again.");
+        return -1;
     }
 
     public static void showTable(Card[] playersHand,Card[] middle,int topOfMiddle){
@@ -122,7 +139,8 @@ public class Project{
         if(topOfMiddle>0) System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
         if(topOfMiddle>1) for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
     }
-    //This is where the game's functions will be.
+    
+    
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         Random rand = new Random();
@@ -141,12 +159,10 @@ public class Project{
         Card [] playersHand = player.getHand();
         Card[] playersPocket = player.getPocket();  
         int topOfDeck = 0;
-        topOfDeck = dealCards(deck, topOfDeck, playersHand, comp); //both topOfDeck value has changed and cards are dealed.
+        topOfDeck = dealCards(deck, topOfDeck, playersHand, comp); //topOfDeck value has changed and cards are dealed.
         Card[] middle = new Card[deck.length]; //Incase noone ever does a match.
         int topOfMiddle=0;
-        for(int i =0;i<middle.length;i++){
-            middle[i] = null;
-        }
+        
         for(int i =0;i<4;i++){
             moveCard(deck,topOfDeck,middle,topOfMiddle);
             topOfMiddle++;
@@ -156,42 +172,16 @@ public class Project{
         //Game has started
         String lastWinner = "noone";
         for(int turn =0;turn<48;turn++){
-            if(!checkHands(comp.getHand())) topOfDeck = dealCards(deck, topOfDeck, playersHand, comp);
             if(turn%2==0){
-                int count = 0;
-                for(int i =0;i<playersHand.length;i++){
-                    if(playersHand[i] == null) count++;
-                }
-                if(count == 4){
-                    topOfDeck = dealCards(deck, topOfDeck, playersHand, comp);
-                }
+                if(!checkHand(comp.getHand())) topOfDeck = dealCards(deck, topOfDeck, playersHand, comp); //If computer's hand is empty then we should deal cards to both sides.
                 int output=0;
                 while(true){
                     showTable(playersHand, middle, topOfMiddle);
                     String input = sc.nextLine();
                     output = checkInput(input, playersHand);
-                    if(output == -1){
-                        System.out.println("You can't input more than one suit. Please try again.");
-                        continue;
-                    }
-                    if(output== -2){
-                        System.out.println("You can't input more than one number. Please try again.");
-                        continue;
-                    }
-                    if(output == -10){
-                        System.out.println("You need to input a suit. Please try again.");
-                        continue;
-                    }
-                    if(output == -20){
-                        System.out.println("You need to input a number. Please try again.");
-                        continue;
-                    }
-                    if(output == -5){
-                        System.out.println("You don't have such a card in your hand!!!. Please try again.");
-                        continue;
-                    }
-                    break;
-                }
+                    if(output>-1) break;
+                    
+                }   
                 moveCard(playersHand, output, middle, topOfMiddle);
                 if(topOfMiddle ==1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber())){
