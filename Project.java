@@ -71,7 +71,7 @@ public class Project{
         String[] words = input.split("");
         String number = "";
         String suit = "";
-        String[][] suits = {{"♥","H"},{"♠","S"},{"♣","C"},{"♦","D"}};
+        String[][] suits = {{"♥","H","h"},{"♠","S","s"},{"♣","C","c"},{"♦","D","d"}};
         String[] numbers = {"A","2","3","4","5","6","7","8","9","J","Q","K"};
         boolean isSuitFound= false;
         boolean isNumberFound = false;
@@ -133,14 +133,22 @@ public class Project{
     }
 
     public static void showTable(Card[] playersHand,Card[] middle,int topOfMiddle){
-        for(int i =0;i<playersHand.length;i++) if( playersHand[i] !=null) System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"   ");
+
+
+        System.out.println("--------------------Your Hand----------------------");
         System.out.println();
+        for(int i =0;i<playersHand.length;i++) if( playersHand[i] !=null) System.out.print(playersHand[i].getSuit()+" "+playersHand[i].getNumber()+"   ");
+        
+        System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
+
         System.out.println("------------------Middle---------------------");
         if(topOfMiddle>0) System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
         if(topOfMiddle>1) for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
+        System.out.println();
+
+
     }
-    
-    
+      
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         Random rand = new Random();
@@ -178,6 +186,12 @@ public class Project{
                 while(true){
                     showTable(playersHand, middle, topOfMiddle);
                     String input = sc.nextLine();
+                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
+                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
+                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
+                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
+                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
+                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
                     output = checkInput(input, playersHand);
                     if(output>-1) break;
                     
@@ -191,7 +205,7 @@ public class Project{
                             moveCard(middle, i, playersPocket, player.getTopOfPocket());
                             player.incrementTopOfPocket();
                         }
-                        System.out.println("Piştii!!");
+                        System.out.println("Piştii!! 10 pts to player.");
                         topOfMiddle = 0;
                     }
                     else if(middle[topOfMiddle].getNumber().equals("J")){
@@ -199,7 +213,7 @@ public class Project{
                             moveCard(middle, i, playersPocket, player.getTopOfPocket());
                             player.incrementTopOfPocket();
                         }
-                        System.out.println("Match!!");
+                        System.out.println("You've made a match!!");
                         lastWinner = "player";
                         topOfMiddle = 0;
                     }
@@ -214,7 +228,7 @@ public class Project{
                             moveCard(middle, i, playersPocket, player.getTopOfPocket());
                             player.incrementTopOfPocket();
                         }
-                        System.out.println("Match!!!");
+                        System.out.println("You've made a match!!");
                         lastWinner = "player";
                         topOfMiddle = 0;
                     }else{
@@ -230,12 +244,12 @@ public class Project{
                 moveCard(comp.getHand(), comp.play(middle, topOfMiddle-1), middle, topOfMiddle);
                 if(topOfMiddle ==1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber())){
-                        System.out.println("Piştii!!");
+                        System.out.println("Piştii!! 10 pts to Computer.");
                         lastWinner = "computer";
                         topOfMiddle = 0;
                     }
                     else if(middle[topOfMiddle].getNumber().equals("J")){
-                        System.out.println("Match!!");
+                        System.out.println("Computer has made a match!!");
                         lastWinner = "computer";
                         topOfMiddle = 0;
                     }
@@ -246,7 +260,7 @@ public class Project{
                 }
                 else if(topOfMiddle>1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber()) || middle[topOfMiddle].getNumber().equals("J")){
-                        System.out.println("Match!!!");
+                        System.out.println("Computer has made a match!!");
                         topOfMiddle = 0;
                     }else{
                         topOfMiddle++;
@@ -264,6 +278,7 @@ public class Project{
                 System.out.println("You got 0 points.");
             }else{
                 if(lastWinner=="player"){
+                    System.out.println("Last winner was player so cards on the middle will go your pocket. ");
                     for(int i = topOfMiddle-1;i>-1;i--){
                         moveCard(middle, i, playersPocket, player.getTopOfPocket());
                         player.incrementTopOfPocket();
@@ -272,29 +287,31 @@ public class Project{
                 else{
                 System.out.println("Last winner was computer so cards on the middle will go computer's pocket.");
                 }
-                for(int i =0;i<player.getTopOfPocket();i++){
-                    if(playersPocket[i].getNumber().equals("10")&& playersPocket[i].getSuit().equals("♦")){
-                        System.out.println("You are lucky found 10 ♦");
-                        player.incrementPoint(3);
-                    }
-                    else if(playersPocket[i].getNumber().equals("2")&& playersPocket[i].getSuit().equals("♣")){
-                        System.out.println("You are lucky found 2 ♣");
-                        player.incrementPoint(2);
-                    }
-                    else{
-                        player.incrementPoint(1);
-                    }
-                }
-                if(player.getTopOfPocket()== 26){
-                    System.out.println("Player's and computer's card numbers are same so no additional points.");
-                }else if(player.getTopOfPocket()>26){
-                    System.out.println("You got "+player.getTopOfPocket()+" cards so u got additional 3 points");
-                    player.incrementPoint(3);
-                }else{
-                    System.out.println("You got "+player.getTopOfPocket()+" cards.");
-                }
-                System.out.println("Your total points: "+player.getPoint());
             }
+        }
+        if(lastWinner!="noone"){
+            for(int i =0;i<player.getTopOfPocket();i++){
+                if(playersPocket[i].getNumber().equals("10")&& playersPocket[i].getSuit().equals("♦")){
+                    System.out.println("There are 10 ♦ in your pocket so extra 3 pts!");
+                    player.incrementPoint(3);
+                }
+                else if(playersPocket[i].getNumber().equals("2")&& playersPocket[i].getSuit().equals("♣")){
+                    System.out.println("There are 2 ♣ in your pocket so extra 2 pts!");
+                    player.incrementPoint(2);
+                }
+                else{
+                    player.incrementPoint(1);
+                }
+            }
+            if(player.getTopOfPocket()== 26){
+                System.out.println("Player's and computer's card numbers are same so no additional pts.");
+            }else if(player.getTopOfPocket()>26){
+                System.out.println("You got "+player.getTopOfPocket()+" cards so u got additional 3 pts!");
+                player.incrementPoint(3);
+            }else{
+                System.out.println("You got "+player.getTopOfPocket()+" cards.");
+            }
+            System.out.println("Your total points: "+player.getPoint());
         }
     }
 }   
