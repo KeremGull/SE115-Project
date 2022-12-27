@@ -1,9 +1,3 @@
-
-/*I'm creating this class because i feel like if i want to add some features
- * outside of the project's requirements, this way would be better.
- * Also it is better for me to practice objects.*/
-
-
 public class Card {
     private String suit ;
     private String number ;

@@ -1,7 +1,9 @@
 import java.util.Scanner;
 import java.util.Random;
-
+import java.nio.file.Paths;
+import java.util.Formatter;
 public class Project{
+    //
     public static Card[] createDeck(){
         Card[] deck = new Card[52];
         String[] suits= {"♠","♣","♥","♦"};
@@ -148,11 +150,110 @@ public class Project{
 
 
     }
-      
+
+    public static String getName(){
+        Scanner sc = new Scanner(System.in);
+        String name ="s";
+        
+        do{
+            if(name=="")System.out.println("You have to input something.");
+            if(name.contains(" ")) System.out.println("Your name can't contain any spaces.");
+            System.out.print("Please input your name: ");
+            name = sc.nextLine().trim();
+            
+        }while(name.contains(" ")|| name == "");
+        return name;
+    }   
+    
+    //File Operations
+    public static String readFile(String path){
+        Scanner sc = null;
+        String context="";
+        try{
+            sc = new Scanner(Paths.get(path));
+            while(sc.hasNextLine()){
+                context += sc.nextLine() +"\n";
+            }
+        }catch(Exception e){
+            return context;
+        }finally{
+            return context;
+        }
+    }
+    public static String[][] getTopTen(String context){
+        String[][] topTen = new String[11][2];
+        if(context == "") return topTen;    
+        int count = 0;
+        for(String i : context.split("\n")){
+            i = i.trim();
+            topTen[count][0] = i.split(" ")[1].trim();
+            topTen[count][1] = i.split(" ")[2].trim();
+            count++;
+        }
+        return topTen;
+    }
+
+    public static int sortTopTen(String[][] topTen,Player player){
+        int peopleInTopTen = 0;
+        for(int i =0;i<topTen.length;i++){
+            if(topTen[i][0] == null){
+                peopleInTopTen = i+1;
+                topTen[i][0] = player.getName();
+                topTen[i][1] = ""+player.getPoint();
+                break;
+            }
+        }
+        if(peopleInTopTen == 0){
+            return -1;
+        }
+            //Sorting algorithm I took this algorithm from our lab11
+        for(int i =1;i<peopleInTopTen;i++){
+            int j = i;
+            while(j>0 && (Integer.parseInt(topTen[j-1][1]) < Integer.parseInt(topTen[j][1]) ) ){
+                String[] temp = topTen[j];
+                topTen[j] = topTen[j-1];
+                topTen[j-1] = temp;
+                j--;
+            }
+        }
+        for(int i = 0;i<peopleInTopTen;i++){
+            if(topTen[i][0].equals(player.getName()) && topTen[i][1].equals(player.getPoint()+"")){
+                return i;
+            }
+        }
+        return -1;
+    }   
+
+    public static void updateTopTen(String[][] topTen){
+        Formatter f = null;
+        int count = 10;
+        String content = "";
+        for(int i =0;i<topTen.length;i++){
+            if(topTen[i][0] == null){
+                count = i;
+                break;
+            }
+        }
+        try{
+            f = new Formatter("TopPlayers.txt");
+            for(int i =0;i<count;i++){
+                content += (i+1)+". "+topTen[i][0]+" "+topTen[i][1]+" pts\n";
+            }
+            f.format("%s",content);
+            System.out.println("Top players updated.");
+        }catch(Exception e ){
+            System.out.println("Something went wrong while program was updating TopPlayers.txt.");
+        }finally{
+            f.close();
+        }
+    }
+        
+        
+
+    
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         Random rand = new Random();
-        System.out.println("Welcome to the Pişti!!!");
 
         Card[] deck = createDeck();
         deckShuffling(deck);
@@ -160,12 +261,13 @@ public class Project{
         //Cutting 
         int cut = rand.nextInt(10,deck.length-10);
         deck = deckCut(cut,deck);
+
         //players and computers variables
-        
         Player player = new Player();
         Computer comp = new Computer(); 
         Card [] playersHand = player.getHand();
         Card[] playersPocket = player.getPocket();  
+        
         int topOfDeck = 0;
         topOfDeck = dealCards(deck, topOfDeck, playersHand, comp); //topOfDeck value has changed and cards are dealed.
         Card[] middle = new Card[deck.length]; //Incase noone ever does a match.
@@ -177,6 +279,8 @@ public class Project{
             topOfDeck++;
         } //Placing 4 cards to middle before game starts.
         
+        player.setName(getName());
+        System.out.println("Welcome to the Pişti "+player.getName()+" !!!!");
         //Game has started
         String lastWinner = "noone";
         for(int turn =0;turn<48;turn++){
@@ -186,12 +290,7 @@ public class Project{
                 while(true){
                     showTable(playersHand, middle, topOfMiddle);
                     String input = sc.nextLine();
-                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
-                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
-                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
-                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
-                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
-                    System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
+                    System.out.printf("%s\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n","");
                     output = checkInput(input, playersHand);
                     if(output>-1) break;
                     
@@ -261,6 +360,7 @@ public class Project{
                 else if(topOfMiddle>1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber()) || middle[topOfMiddle].getNumber().equals("J")){
                         System.out.println("Computer has made a match!!");
+                        lastWinner = "computer";
                         topOfMiddle = 0;
                     }else{
                         topOfMiddle++;
@@ -304,7 +404,7 @@ public class Project{
                 }
             }
             if(player.getTopOfPocket()== 26){
-                System.out.println("Player's and computer's card numbers are same so no additional pts.");
+                System.out.println("Your and computer's card numbers are same so no additional pts.");
             }else if(player.getTopOfPocket()>26){
                 System.out.println("You got "+player.getTopOfPocket()+" cards so u got additional 3 pts!");
                 player.incrementPoint(3);
@@ -312,6 +412,19 @@ public class Project{
                 System.out.println("You got "+player.getTopOfPocket()+" cards.");
             }
             System.out.println("Your total points: "+player.getPoint());
-        }
+            String context = readFile("TopPlayers.txt");
+            String[][] topTen = getTopTen(context);
+            int playerRank = sortTopTen(topTen, player);
+            if(playerRank==10){
+                System.out.println("You couldn't get in the top10 :(");
+            }
+            else if(playerRank==-1){
+                System.out.println("Something went wrong while sorting.");
+            }else{
+
+                System.out.println("Congratulaions now you have the "+(playerRank+1)+". rank.");
+                updateTopTen(topTen);
+            }
+        }   
     }
-}   
+}       
