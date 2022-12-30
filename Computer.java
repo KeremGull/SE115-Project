@@ -31,10 +31,19 @@ public class Computer {
                     }
                 }
             }
+            for(int i =0;i<hand.length;i++){
+                if(hand[i] != null){
+                    if(hand[i].getNumber().equals("J")){
+                        return i;
+                    }
+                }
+            }
         }
         while(true){
             int index = rand.nextInt(0,4);
-            if(hand[index]!= null) return index;
+            if(hand[index]!= null){
+                return index;
+            }
         } 
     }
 }

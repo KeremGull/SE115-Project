@@ -29,7 +29,7 @@ public class Project{
             deck[someValue] = old;
         }
     }
-
+    
     public static Card[] deckCut(int cut,Card[] deck){
         Card[] deckCutted= new Card[deck.length];
         //I realized that if i cut at the position x actually every card goes to its "numbers of cards - x" right.
@@ -143,7 +143,7 @@ public class Project{
         
         System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();System.out.println();
 
-        System.out.println("------------------Middle---------------------");
+        System.out.println("------------------Board---------------------");
         if(topOfMiddle>0) System.out.println(middle[topOfMiddle-1].getSuit()+" "+middle[topOfMiddle-1].getNumber());
         if(topOfMiddle>1) for(int i = topOfMiddle-2;i>-1;i--) System.out.print(middle[i].getSuit()+" "+middle[i].getNumber()+"   ");
         System.out.println();
@@ -256,6 +256,7 @@ public class Project{
         Random rand = new Random();
 
         Card[] deck = createDeck();
+        
         deckShuffling(deck);
 
         //Cutting 
@@ -283,12 +284,17 @@ public class Project{
         System.out.println("Welcome to the Pişti "+player.getName()+" !!!!");
         //Game has started
         String lastWinner = "noone";
+        String computersCard = "";
         for(int turn =0;turn<48;turn++){
             if(turn%2==0){
                 if(!checkHand(comp.getHand())) topOfDeck = dealCards(deck, topOfDeck, playersHand, comp); //If computer's hand is empty then we should deal cards to both sides.
                 int output=0;
                 while(true){
+                    if(computersCard !=""){
+                        System.out.println("Computer played "+computersCard);
+                    }
                     showTable(playersHand, middle, topOfMiddle);
+                    System.out.print("Card: "); 
                     String input = sc.nextLine();
                     System.out.printf("%s\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n","");
                     output = checkInput(input, playersHand);
@@ -340,7 +346,9 @@ public class Project{
 
             }
             else{
-                moveCard(comp.getHand(), comp.play(middle, topOfMiddle-1), middle, topOfMiddle);
+                int cardIndex = comp.play(middle,topOfMiddle-1);
+                computersCard = comp.getHand()[cardIndex].getSuit() + " " +comp.getHand()[cardIndex].getNumber();
+                moveCard(comp.getHand(), cardIndex, middle, topOfMiddle);
                 if(topOfMiddle ==1){
                     if(middle[topOfMiddle].getNumber().equals(middle[topOfMiddle-1].getNumber())){
                         System.out.println("Piştii!! 10 pts to Computer.");
@@ -425,6 +433,7 @@ public class Project{
                 System.out.println("Congratulaions now you have the "+(playerRank+1)+". rank.");
                 updateTopTen(topTen);
             }
+
         }   
     }
 }       
